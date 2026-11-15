@@ -1,0 +1,35 @@
+:root{--olive:#3e422c;--cream:#ece6d6;--paper:#f6f2e8;--ink:#222;--sub:#6b6b5e;--line:#d8d2c2}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans JP",sans-serif;line-height:1.95;letter-spacing:.03em}
+a{color:inherit}
+.top{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--paper);position:sticky;top:0;z-index:5}
+.logo{font-weight:700;font-size:22px;text-decoration:none;letter-spacing:.04em}
+.logo span{font-size:12px;letter-spacing:.3em;color:var(--sub);margin-left:6px}
+nav a{font-size:12px;letter-spacing:.2em;text-decoration:none;margin-left:20px}
+main{max-width:760px;margin:0 auto;padding:32px 20px 64px}
+.intro{text-align:center;padding:24px 0 40px}
+.intro h1{font-family:"Noto Serif JP",serif;font-size:34px;letter-spacing:.12em;margin:0 0 8px}
+.intro p{color:var(--sub);font-size:14px;margin:0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
+.post{text-decoration:none;display:block}
+.post img{width:100%;aspect-ratio:1200/630;object-fit:cover;display:block}
+.pd{display:block;font-size:11px;letter-spacing:.15em;color:var(--sub);margin-top:10px}
+.pt{display:block;font-weight:700;font-size:15px;line-height:1.6;margin-top:4px}
+.hero{width:100%;display:block;margin-bottom:24px}
+.meta{font-size:12px;letter-spacing:.15em;color:var(--sub);margin:0}
+article h1{font-family:"Noto Serif JP",serif;font-size:28px;line-height:1.5;margin:8px 0 32px}
+.body p{margin:0 0 1.4em}
+.body h2{font-family:"Noto Serif JP",serif;font-size:21px;line-height:1.5;margin:2.4em 0 1em;padding-top:1em;border-top:1px solid var(--line)}
+.body ul{padding-left:1.2em}
+.card{display:flex;gap:14px;align-items:center;max-width:440px;margin:4px 0 22px;padding:10px;border:1px solid var(--line);background:#fff;text-decoration:none}
+.card img{width:96px;height:96px;object-fit:contain;flex:0 0 96px}
+.card .t{display:block;font-size:13px;font-weight:700;line-height:1.6}
+.card .p{display:block;font-size:13px}
+.card .b{display:inline-block;margin-top:6px;font-size:11px;letter-spacing:.1em;border-bottom:1px solid var(--olive);color:var(--olive)}
+.src,.more{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:13px;color:var(--sub)}
+.src h3,.more h3{font-size:12px;letter-spacing:.2em;margin:0 0 8px;color:var(--ink)}
+.note{font-size:12px;color:var(--sub);margin-top:32px}
+footer{background:var(--olive);color:var(--cream);text-align:center;font-size:11px;letter-spacing:.12em;padding:28px 16px}
+footer a{color:var(--cream)}
+footer p{margin:4px 0}
+@media (max-width:640px){.grid{grid-template-columns:1fr}article h1{font-size:23px}.top{padding:14px 16px}nav a{margin-left:12px}}
