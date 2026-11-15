@@ -96,6 +96,7 @@ def layout(title, desc, content, url, image=None):
 <link rel="canonical" href="%s"><link rel="alternate" type="application/rss+xml" href="/rss.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css"></head>
 <body><header class="top"><a class="logo" href="/">MoDi <span>JOURNAL</span></a>
 <nav><a href="/">COLUMN</a><a href="%s">ONLINE STORE</a></nav></header>
@@ -118,7 +119,10 @@ def main():
     if os.path.exists(OUT):
         shutil.rmtree(OUT)
     os.makedirs(OUT)
-    shutil.copy('static/style.css', OUT + '/style.css')
+        shutil.copy('static/style.css', OUT + '/style.css')
+    for f in ['favicon.ico', 'apple-touch-icon.png']:
+        if os.path.exists('static/' + f):
+            shutil.copy('static/' + f, OUT + '/' + f)
     if os.path.exists('CNAME'):
         shutil.copy('CNAME', OUT + '/CNAME')
     os.makedirs(OUT + '/images', exist_ok=True)
