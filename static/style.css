@@ -1,6 +1,7 @@
 :root{--olive:#3e422c;--cream:#ece6d6;--paper:#f6f2e8;--ink:#222;--sub:#6b6b5e;--line:#d8d2c2}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans JP",sans-serif;line-height:1.95;letter-spacing:.03em}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans JP",sans-serif;line-height:1.95;letter-spacing:.03em;min-height:100vh;display:flex;flex-direction:column}
+main{flex:1}
 a{color:inherit}
 .top{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--paper);position:sticky;top:0;z-index:5}
 .logo{font-weight:700;font-size:22px;text-decoration:none;letter-spacing:.04em}
