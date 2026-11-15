@@ -99,7 +99,7 @@ def layout(title, desc, content, url, image=None):
 <link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css"></head>
 <body><header class="top"><a class="logo" href="/">MoDi <span>JOURNAL</span></a>
-<nav><a href="/">COLUMN</a><a href="%s">ONLINE STORE</a></nav></header>
+<nav><a href="%s">ONLINE STORE</a></nav></header>
 <main>%s</main>
 <footer><p>MILITARY ARCHIVE CURATION STORE ― memento mori &amp; carpe diem.</p>
 <p><a href="%s">MoDi ONLINE STORE</a> ・ MoDi is operated by <a href="https://northwood-jp.com">NORTHWOOD</a></p></footer>
@@ -115,7 +115,7 @@ def summary(body, n=110):
 def main():
     posts = [read_post(os.path.join('posts', f)) for f in sorted(os.listdir('posts')) if f.endswith('.md')]
     posts = [p for p in posts if p['date_obj'] <= TODAY and p.get('status', 'publish') == 'publish']
-    posts.sort(key=lambda p: p['date_obj'], reverse=True)
+    posts.sort(key=lambda p: (p['date_obj'], int(p.get('no') or 0)), reverse=True)
     if os.path.exists(OUT):
         shutil.rmtree(OUT)
     os.makedirs(OUT)
