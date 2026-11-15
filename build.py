@@ -119,7 +119,7 @@ def main():
     if os.path.exists(OUT):
         shutil.rmtree(OUT)
     os.makedirs(OUT)
-        shutil.copy('static/style.css', OUT + '/style.css')
+    shutil.copy('static/style.css', OUT + '/style.css')
     for f in ['favicon.ico', 'apple-touch-icon.png']:
         if os.path.exists('static/' + f):
             shutil.copy('static/' + f, OUT + '/' + f)
