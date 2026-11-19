@@ -3,7 +3,7 @@ import random
 from PIL import Image, ImageDraw, ImageFont
 
 D = '/usr/share/fonts/opentype/noto/'
-SERIF, SANS = D + 'NotoSerifCJK-Bold.ttc', D + 'NotoSansCJK-Medium.ttc'
+SERIF, SANS = D + 'NotoSerifCJK-Bold.ttc', D + 'NotoSansCJK-Bold.ttc'
 f = lambda p, s: ImageFont.truetype(p, s, index=0)
 
 
