@@ -37,11 +37,12 @@ def keep_main(out):
     gap = max(3, int(out.width * 0.012))
     near = ndi.binary_dilation(fg, iterations=gap)      # 少し太らせて、近いもの同士をつなげる
     lab, n = ndi.label(near)
-    if n > 1:
+    if n:
         sizes = ndi.sum(fg, lab, range(1, n + 1))
         main = np.argmax(sizes) + 1
-        a[lab != main] = 0
-        out = out.copy(); out.putalpha(Image.fromarray(a))
+        a[lab != main] = 0          # まとまりの外は、うっすら残った影やノイズも含めて全部消す
+    a[a < 40] = 0
+    out = out.copy(); out.putalpha(Image.fromarray(a))
     return out.crop(out.getbbox())
 
 def cutout_color(im):
