@@ -123,6 +123,12 @@ def main():
     for f in ['favicon.ico', 'apple-touch-icon.png', 'modi-hakase.svg']:
         if os.path.exists('static/' + f):
             shutil.copy('static/' + f, OUT + '/' + f)
+    if os.path.exists('static/coords.json'):
+        shutil.copy('static/coords.json', OUT + '/coords.json')
+    os.makedirs(OUT + '/coords', exist_ok=True)
+    for f in os.listdir('static'):
+        if f.endswith('.jpg'):
+            shutil.copy('static/' + f, OUT + '/coords/' + f)
     if os.path.exists('CNAME'):
         shutil.copy('CNAME', OUT + '/CNAME')
     os.makedirs(OUT + '/images', exist_ok=True)
