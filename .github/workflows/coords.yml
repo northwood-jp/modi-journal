@@ -1,0 +1,48 @@
+name: coords
+
+on:
+  schedule:
+    - cron: '20 * * * *'   # 毎時20分ごとに、コーデ候補シートを見に行く
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: coords
+  cancel-in-progress: false
+
+jobs:
+  coords:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: シートを見て、やることがあるか確かめる
+        id: check
+        env:
+          GAS_URL: ${{ secrets.GAS_URL }}
+          GAS_TOKEN: ${{ secrets.GAS_TOKEN }}
+        run: |
+          n=$(curl -sL "$GAS_URL?mode=coords&token=$GAS_TOKEN" | python -c "import json,sys; d=json.load(sys.stdin); print(len(d.get('todo',[]))+len(d.get('adopt',[])))")
+          echo "やること: $n 件"
+          echo "n=$n" >> $GITHUB_OUTPUT
+      - name: 必要な部品を入れる
+        if: steps.check.outputs.n != '0'
+        run: pip install pillow numpy scipy requests "rembg[cpu]"
+      - name: 候補画像を作る／採用を公開する
+        id: run
+        if: steps.check.outputs.n != '0'
+        env:
+          GAS_URL: ${{ secrets.GAS_URL }}
+          GAS_TOKEN: ${{ secrets.GAS_TOKEN }}
+        run: python coords.py
+      - name: 採用があれば、サイトを作り直す
+        if: steps.run.outputs.adopted == 'yes'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run publish.yml
