@@ -60,25 +60,41 @@ def short(name):
     words = [w for w in re.split(r'[\s　]+', name) if w and not re.match(drop, w)]
     return ' '.join(words[:4])
 
+def prepare_raw(c):
+    """候補の3商品について、商品画像1〜6を取ってきて切り抜き、raw/商品ID/番号.png に保存する。
+    組み立ては Claude が写真を見ながら行う（写真のばらつきが大きく、決まりだけでは整わないため）"""
+    made = False
+    for part in ('outer', 'bottom', 'shoes'):
+        pid, url = c[part + 'Id'], c[part + 'Img']
+        d = 'raw/%s' % pid
+        if os.path.exists(d) and os.listdir(d):
+            continue
+        os.makedirs(d, exist_ok=True)
+        urls = [url.replace('/1/', '/%d/' % n) for n in range(1, 7)] if '/1/' in url else [url]
+        for n, u in enumerate(urls, 1):
+            try:
+                im = fetch(u)
+            except Exception:
+                continue
+            im.save('%s/%d.jpg' % (d, n), quality=90)
+            try:
+                coord_lib.cutout(im).save('%s/%d.png' % (d, n))
+            except Exception as e:
+                print('切り抜けませんでした:', u, e)
+            made = True
+        print('写真を用意しました:', pid)
+    return made
+
 def main():
     d = gas_get()
     changed = adopted = False
-    os.makedirs('candidates', exist_ok=True)
 
-    # ① 画像待ちの候補 → 画像を作る
+    # ① 画像待ちの候補 → 写真を用意する（組み立ては Claude）
     for c in d.get('todo', []):
         try:
-            outer = best_cutout(c['outerImg'], 'outer')
-            bottom = best_cutout(c['bottomImg'], 'bottom')
-            shoes = best_cutout(c['shoesImg'], 'shoes')
-            img = coord_lib.compose(outer, bottom, shoes, c.get('kind', 'jacket'))
-            fn = 'candidates/r%s-%s.jpg' % (c['row'], time.strftime('%Y%m%d%H%M'))
-            img.save(fn, quality=85)
-            c['file'] = fn
-            changed = True
-            print('候補画像を作りました:', fn)
+            changed = prepare_raw(c) or changed
         except Exception as e:
-            print('候補を作れませんでした（行%s）:' % c['row'], e)
+            print('写真を用意できませんでした（行%s）:' % c['row'], e)
 
     # ② 採用された候補 → coords.json に足して公開
     path = 'static/coords.json'
@@ -103,10 +119,7 @@ def main():
     # 変更を保存してから、シートに知らせる
     if changed:
         os.system('git config user.name "modi-bot" && git config user.email "modi-bot@users.noreply.github.com"')
-        os.system('git add candidates static && git commit -m "コーデ画像を更新 [skip ci]" && git push')
-    for c in d.get('todo', []):
-        if c.get('file'):
-            gas_post({'type': 'coords', 'row': c['row'], 'image': REPO_RAW + c['file']})
+        os.system('git add raw candidates static && git commit -m "コーデ画像を更新 [skip ci]" && git push')
     for c in d.get('adopt', []):
         if c.get('no'):
             gas_post({'type': 'coords_pub', 'row': c['row'], 'no': c['no']})
