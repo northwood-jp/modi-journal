@@ -24,10 +24,21 @@ def cutout(im):
         out = remove(im.convert('RGB'), session=_session)
         a = np.asarray(out.split()[3])
         if (a > 128).mean() > 0.05:
-            return out.crop(out.getbbox())
+            return keep_main(out)
     except Exception as e:
         print('rembgが使えないので色で抜きます:', e)
     return cutout_color(im)
+
+def keep_main(out):
+    """いちばん大きいかたまり（商品）だけを残す。文字や、2枚目の小さな写真などは消す"""
+    a = np.asarray(out.split()[3]).copy()
+    lab, n = ndi.label(a > 100)
+    if n > 1:
+        sizes = ndi.sum(a > 100, lab, range(1, n + 1))
+        keep = [i + 1 for i, s in enumerate(sizes) if s >= sizes.max() * 0.35]
+        a[~np.isin(lab, keep)] = 0
+        out = out.copy(); out.putalpha(Image.fromarray(a))
+    return out.crop(out.getbbox())
 
 def cutout_color(im):
     a = np.asarray(im.convert('RGB')).astype(int)
