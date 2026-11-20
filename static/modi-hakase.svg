@@ -3,7 +3,7 @@
     <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
   <g filter="url(#h)" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
     <!-- ベレー帽 -->
-    <path d="M104 132 C92 92 140 62 190 64 C244 66 268 94 256 120 C240 136 140 142 104 132 Z" fill="#fff" pathLength="100" stroke-dasharray="18 3 79"/>
+    <path d="M104 132 C92 92 140 62 190 64 C244 66 268 94 256 120 C240 136 140 142 104 132 Z" fill="none" pathLength="100" stroke-dasharray="18 3 79"/>
     <path d="M184 64 q2 -12 10 -14"/>
     <path d="M200 112 C202 98 204 88 206 84 C210 94 212 100 214 104 C217 98 220 90 224 84 C225 94 226 104 228 112" stroke-width="4"/>
     <!-- 顔 -->
