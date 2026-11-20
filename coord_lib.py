@@ -30,13 +30,17 @@ def cutout(im):
     return cutout_color(im)
 
 def keep_main(out):
-    """いちばん大きいかたまり（商品）だけを残す。文字や、2枚目の小さな写真などは消す"""
+    """商品だけを残す：近くにあるかたまり同士（ブーツの左右など）はひとまとめにして、
+    いちばん大きいまとまりだけを残す。離れた2枚目の写真や文字は消す"""
     a = np.asarray(out.split()[3]).copy()
-    lab, n = ndi.label(a > 100)
+    fg = a > 100
+    gap = max(3, int(out.width * 0.012))
+    near = ndi.binary_dilation(fg, iterations=gap)      # 少し太らせて、近いもの同士をつなげる
+    lab, n = ndi.label(near)
     if n > 1:
-        sizes = ndi.sum(a > 100, lab, range(1, n + 1))
-        keep = [i + 1 for i, s in enumerate(sizes) if s >= sizes.max() * 0.35]
-        a[~np.isin(lab, keep)] = 0
+        sizes = ndi.sum(fg, lab, range(1, n + 1))
+        main = np.argmax(sizes) + 1
+        a[lab != main] = 0
         out = out.copy(); out.putalpha(Image.fromarray(a))
     return out.crop(out.getbbox())
 
