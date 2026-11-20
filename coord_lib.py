@@ -83,10 +83,36 @@ def place(canvas, item, width, center, angle, layers):
     canvas.alpha_composite(it, (x, y))
 
 def compose(outer, bottom, shoes, kind='jacket'):
-    """切り抜いた3点を、決めたバランスで並べる（下のものから順に置く）"""
-    L = LAYOUT.get(kind, LAYOUT['jacket'])
+    """切り抜いた3点を、001・002のバランスで並べる。
+    決まった座標ではなく「服どうしの位置関係」で置く：
+      ・ボトムは丈（高さ）をそろえる。横に広い写真は幅で抑える
+      ・アウターは幅をそろえるが、ボトムに対して大きすぎるときは、001・002の比率まで縮める
+      ・ボトムの上端をアウターのすその中に深く入れ、真ん中をそろえる
+      ・全体を画面の上下まん中に置き、靴はボトムのすその左に"""
     cv = backdrop().convert('RGBA')
-    place(cv, bottom, *L['bottom'][:1], L['bottom'][1:3], L['bottom'][3], SHADOW_FLAT)
-    place(cv, outer, *L['outer'][:1], L['outer'][1:3], L['outer'][3], SHADOW_FLAT)
-    place(cv, shoes, *L['shoes'][:1], L['shoes'][1:3], L['shoes'][3], SHADOW_TALL)
+    coat = (kind == 'coat')
+    def fit(im, w=None, h=None):
+        return (w, int(im.height * w / im.width)) if w else (int(im.width * h / im.height), h)
+    # ボトム
+    bw, bh = fit(bottom, h=700 if not coat else 640)
+    if bw > 460:
+        bw, bh = fit(bottom, w=460)
+    # アウター（001・002で決めた「アウターの丈÷ボトムの丈」を上限にする）
+    ow, oh = fit(outer, w=530 if not coat else 500)
+    ratio_max = 0.80 if not coat else 1.00
+    if oh > bh * ratio_max:
+        ow, oh = fit(outer, h=int(bh * ratio_max))
+    overlap = int(oh * (0.16 if not coat else 0.10))
+    total = oh + bh - overlap
+    otop = max(40, (H - total) // 2)
+    btop = otop + oh - overlap
+    cx = 565
+    # 靴
+    sw = 245
+    sh_ = int(shoes.height * sw / shoes.width)
+    sx = max(150, cx - bw // 2 - sw // 2 + 40)
+    sy = min(H - sh_ // 2 - 30, btop + bh - sh_ // 2 - 30)
+    place(cv, bottom, bw, (cx, btop + bh // 2), 0, SHADOW_FLAT)
+    place(cv, outer, ow, (cx, otop + oh // 2), 0, SHADOW_FLAT)
+    place(cv, shoes, sw, (sx, sy), -10, SHADOW_TALL)
     return cv.convert('RGB')

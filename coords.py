@@ -34,7 +34,7 @@ def best_cutout(url, part):
     """商品画像1〜6を順に試して、いちばん「商品だけの写真」らしいものを選ぶ。
     URLが /1/ 以外（手で指定した画像）のときは、その画像だけを使う"""
     urls = [url]
-    if '/1/' in url:
+    if '/1/' in url and part != 'outer':     # アウターは1枚目（正面）を使う。後ろ姿を拾わないように
         urls = [url.replace('/1/', '/%d/' % n) for n in range(1, 7)]
     lo, hi = SHAPE[part]
     best, best_score = None, -1e9
@@ -44,7 +44,7 @@ def best_cutout(url, part):
         except Exception as e:
             continue
         ratio = im.height / max(1, im.width)
-        score = -max(0, lo - ratio, ratio - hi) * 10 - n * 0.3   # 形が合うほど高く、前の画像ほど少し優先
+        score = -max(0, lo - ratio, ratio - hi) * 10 - n * 1.5   # 別の写真に替えるのは、形がよほど合わないときだけ   # 形が合うほど高く、前の画像ほど少し優先
         print('  %s 画像%d 縦横比%.2f 点数%.2f' % (part, n + 1, ratio, score))
         if score > best_score:
             best, best_score = im, score
