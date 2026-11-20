@@ -158,7 +158,7 @@ def main():
 <span class="pd">No.%s ・ %s</span><span class="pt">%s</span></a>''' % (
         p['slug'], p['slug'], esc(p['title']), esc(p.get('no', '')), p['date_obj'].strftime('%Y.%m.%d'), esc(p['title']))
         for p in posts)
-    intro = '<section class="intro"><img class="hakase" src="/modi-hakase.svg" alt="MoDiの博士" width="150" height="167"><h1>MoDi JOURNAL</h1><p>各国軍の名作を、確かな資料からひもとく読みもの。<br>時代の記録を忘れずに、今日の一着として楽しむために。</p></section>'
+    intro = '<section class="intro"><img class="hakase" src="/modi-hakase.svg" alt="MoDiの博士" width="150" height="167"><h1>MoDi JOURNAL</h1><p>各国軍の名作を、確かな資料からひもとく読みもの。<br>時代の記録を、MoDi博士が一着ずつ丁寧に解説します。</p></section>'
     open(OUT + '/index.html', 'w', encoding='utf-8').write(
         layout('MoDi JOURNAL | ミリタリーの名作をひもとく読みもの', '各国軍の名作ミリタリーウェアの歴史と見分け方を、確かな資料からひもとくMoDiの読みもの。',
                intro + '<div class="grid">%s</div>' % cards, SITE + '/'))
