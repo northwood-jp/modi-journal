@@ -57,7 +57,8 @@ def best_cutout(url, part):
 def short(name):
     """商品名から、リンクに出す短い名前を作る"""
     drop = r'^(放出|レプリカ|デッドストック.*|未使用|新品|ミリタリー.*|軍モノ|軍パン|メンズ|レディース|.*相当|.*サイズ|[0-9].*|X*S|X*L|M|F|【.*|〔.*|\(.*)$'
-    words = [w for w in re.split(r'[\s　]+', name) if w and not re.match(drop, w)]
+    name = re.sub(r'[（(【〔\[].*?[）)】〕\]]', ' ', name)   # かっこの中は外す
+    words = [w for w in re.split(r'[\s　]+', name) if w and not re.match(drop, w) and w not in ('靴', 'シューズ', 'レプリカ')]
     return ' '.join(words[:4])
 
 def prepare_raw(c):
