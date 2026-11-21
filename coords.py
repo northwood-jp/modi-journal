@@ -58,15 +58,17 @@ def short(name):
     """商品名から、リンクに出す短い名前を作る"""
     drop = r'^(放出|レプリカ|デッドストック.*|未使用|新品|ミリタリー.*|軍モノ|軍パン|メンズ|レディース|.*相当|.*サイズ|[0-9].*|X*S|X*L|M|F|【.*|〔.*|\(.*)$'
     name = re.sub(r'[（(【〔\[].*?[）)】〕\]]', ' ', name)   # かっこの中は外す
-    words = [w for w in re.split(r'[\s　]+', name) if w and not re.match(drop, w) and w not in ('靴', 'シューズ', 'レプリカ')]
+    words = [w for w in re.split(r'[\s　]+', name) if w and not re.match(drop, w) and w not in ('靴', 'シューズ', 'レプリカ', '帽子')]
     return ' '.join(words[:4])
 
 def prepare_raw(c):
     """候補の3商品について、商品画像1〜6を取ってきて切り抜き、raw/商品ID/番号.png に保存する。
     組み立ては Claude が写真を見ながら行う（写真のばらつきが大きく、決まりだけでは整わないため）"""
     made = False
-    for part in ('outer', 'bottom', 'shoes'):
-        pid, url = c[part + 'Id'], c[part + 'Img']
+    for part in ('outer', 'bottom', 'shoes', 'hat'):
+        pid, url = c.get(part + 'Id'), c.get(part + 'Img')
+        if not pid or not url:
+            continue          # 帽子はないこともある
         d = 'raw/%s' % pid
         if os.path.exists(d) and os.listdir(d):
             continue
@@ -110,7 +112,8 @@ def main():
             'image': SITE + 'coords/%s.jpg' % no,
             'items': [{'id': c['outerId'], 'name': short(c['outerName'])},
                       {'id': c['bottomId'], 'name': short(c['bottomName'])},
-                      {'id': c['shoesId'], 'name': short(c['shoesName'])}]})
+                      {'id': c['shoesId'], 'name': short(c['shoesName'])}]
+                     + ([{'id': c['hatId'], 'name': short(c['hatName'])}] if c.get('hatId') else [])})
         c['no'] = no
         changed = adopted = True
         print('公開に追加しました:', no, c['title'])
