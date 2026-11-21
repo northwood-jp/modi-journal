@@ -14,7 +14,7 @@ jobs:
           python-version: '3.11'
       - name: 道具を入れる
         run: |
-          pip install -q opencv-contrib-python-headless pillow numpy
+          pip install -q "opencv-contrib-python-headless==4.10.0.84" "numpy<2" pillow
           curl -sSL -o EDSR_x2.pb https://raw.githubusercontent.com/Saafke/EDSR_Tensorflow/master/models/EDSR_x2.pb
           ls -la EDSR_x2.pb
       - name: 画像を作る
