@@ -22,6 +22,7 @@ try:
     sr = cv2.dnn_superres.DnnSuperResImpl_create()
     sr.readModel('EDSR_x2.pb'); sr.setModel('edsr', 2)
 except Exception as e:
+    sr = None
     print('AIモデルを使えないので、通常の拡大にします:', e)
 
 def upscale(im):
