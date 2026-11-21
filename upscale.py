@@ -32,6 +32,8 @@ def upscale(im):
     return im.resize((im.width * 2, im.height * 2), Image.LANCZOS)
 
 urls = json.load(open('upscale/targets.json'))['urls']
+SHARD, SHARDS = int(os.environ.get('SHARD', 0)), int(os.environ.get('SHARDS', 1))
+urls = urls[SHARD::SHARDS]   # 何台かに分けて同時に処理する
 result = {}
 pairs = []
 for n, u in enumerate(urls, 1):
@@ -56,7 +58,7 @@ for n, u in enumerate(urls, 1):
     pairs.append((name, small, up))
     print(n, result[u]['method'], name, small.size, '->', up.size)
 
-json.dump(result, open('upscale/result.json', 'w'), ensure_ascii=False, indent=1)
+json.dump(result, open('upscale/result_%d.json' % SHARD, 'w'), ensure_ascii=False, indent=1)
 
 # 見くらべ用：左＝元の画像をそのまま拡大／右＝AI拡大。1枚に6組ずつ
 for k in range(0, len(pairs), 6):
@@ -68,5 +70,5 @@ for k in range(0, len(pairs), 6):
         b = up.resize((600, 600))
         sheet.paste(a, (0, 610 * j)); sheet.paste(b, (620, 610 * j))
         d.text((8, 610 * j + 8), name + '  before', fill='red'); d.text((628, 610 * j + 8), 'after (AI)', fill='red')
-    sheet.save(os.path.join(CMP, '%02d.jpg' % (k // 6 + 1)), quality=80)
+    sheet.save(os.path.join(CMP, '%d_%02d.jpg' % (SHARD, k // 6 + 1)), quality=80)
 print('完了：', {m: sum(1 for r in result.values() if r['method'] == m) for m in set(r['method'] for r in result.values())})
