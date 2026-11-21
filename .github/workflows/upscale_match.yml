@@ -1,0 +1,22 @@
+name: upscale-match
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  match:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -q pillow "numpy<2"
+      - run: python upscale_match.py
+      - run: |
+          git config user.name "modi-bot"
+          git config user.email "modi-bot@users.noreply.github.com"
+          git add upscale/plan.json
+          git commit -m "画像の差し替え計画 [skip ci]" || echo "変更なし"
+          git pull --rebase -q origin main && git push -q origin HEAD:main
