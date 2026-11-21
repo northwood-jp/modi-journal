@@ -1,0 +1,28 @@
+name: upscale
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upscale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 道具を入れる
+        run: |
+          pip install -q opencv-contrib-python-headless pillow numpy
+          curl -sSL -o EDSR_x2.pb https://raw.githubusercontent.com/Saafke/EDSR_Tensorflow/master/models/EDSR_x2.pb
+          ls -la EDSR_x2.pb
+      - name: 画像を作る
+        run: python upscale.py
+      - name: 結果を保存
+        run: |
+          git config user.name "modi-bot"
+          git config user.email "modi-bot@users.noreply.github.com"
+          git add upscale
+          git commit -m "小さい商品画像を600pxに [skip ci]" || echo "変更なし"
+          git pull --rebase -q origin main && git push -q origin HEAD:main
