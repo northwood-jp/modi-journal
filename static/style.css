@@ -38,6 +38,7 @@ footer p{margin:4px 0}
 .filter{margin-top:12px!important;font-size:13px}.filter a{color:var(--olive)}
 main:has(.coords){max-width:1080px}
 main:has(.coords) .intro{padding:8px 0 28px}
+.intro h1.sr{font-size:28px;letter-spacing:.08em}
 .coords{display:grid;grid-template-columns:repeat(3,1fr);gap:32px 20px}
 .coord img{width:100%;display:block}
 .coord .cn{font-size:10px;letter-spacing:.2em;color:var(--sub);margin:10px 0 2px}
@@ -48,4 +49,5 @@ main:has(.coords) .intro{padding:8px 0 28px}
 .coord li a:hover{border-color:var(--olive)}
 .toall{text-align:center;margin:48px 0 0}.toall a{display:inline-block;padding:14px 28px;border:1px solid var(--olive);color:var(--olive);text-decoration:none;font-weight:700;font-size:14px;letter-spacing:.05em}.toall a:hover{background:var(--olive);color:var(--cream)}
 @media (max-width:900px){.coords{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.intro h1.sr{font-size:20px;letter-spacing:.04em}}
 @media (max-width:640px){.coords{grid-template-columns:1fr}.grid{grid-template-columns:1fr}article h1{font-size:23px}.top{padding:14px 16px}nav a{margin-left:10px;font-size:10px;letter-spacing:.08em;white-space:nowrap}.logo{white-space:nowrap}}
