@@ -180,9 +180,13 @@ def main():
         head = '''<section class="intro"><img class="hakase" src="/dr-modi-icon.png" alt="Dr.MoDi" width="75" height="96" style="width:75px">
 <h1>COORDINATE</h1><p>Dr.MoDiのコーディネート提案。<br>MoDiのアイテムだけで組んだ、%d通りの着こなしです。</p>
 <p class="filter" id="filter" hidden>このアイテムを使ったコーデを表示しています ― <a href="/coords/">すべて見る</a></p></section>''' % len(cs)
-        script = '''<script>(function(){var m=location.search.match(/item=(\\d+)/);if(!m)return;var n=0;
-document.querySelectorAll('.coord').forEach(function(e){if((','+e.dataset.items+',').indexOf(','+m[1]+',')<0)e.style.display='none';else n++;});
-if(n)document.getElementById('filter').hidden=false;else document.querySelectorAll('.coord').forEach(function(e){e.style.display='';});})();</script>'''
+        script = '''<script>(function(){var m=location.search.match(/item=(\\d+)/);if(!m)return;var n=0,name='';
+document.querySelectorAll('.coord').forEach(function(e){if((','+e.dataset.items+',').indexOf(','+m[1]+',')<0){e.style.display='none';return;}n++;
+if(!name){var a=e.querySelector('a[href$="/items/'+m[1]+'"]');if(a)name=a.textContent.replace(' →','');}});
+if(!n){document.querySelectorAll('.coord').forEach(function(e){e.style.display='';});return;}
+var f=document.getElementById('filter');f.hidden=false;f.firstChild.textContent=(name?'「'+name+'」':'このアイテム')+'を使ったコーデ（'+n+'件）を表示しています ― ';
+var back=document.createElement('p');back.className='toall';back.innerHTML='<a href="/coords/">Dr.MoDiのコーディネート一覧へ →</a>';
+document.querySelector('.coords').insertAdjacentElement('afterend',back);})();</script>'''
         open(OUT + '/coords/index.html', 'w', encoding='utf-8').write(
             layout('Dr.MoDiのコーディネート提案 | MoDi JOURNAL', 'ミリタリーのデッドストックとレプリカだけで組んだ、Dr.MoDiのコーディネート提案。',
                    head + '<div class="coords">%s</div>' % boxes + script, SITE + '/coords/', SITE + '/coords/' + cs[0]['id'] + '.jpg'))
