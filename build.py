@@ -177,7 +177,7 @@ def main():
             c['id'], ','.join(i['id'] for i in c['items']), c['id'], esc(c['title']), c['id'], esc(c['title']), esc(c.get('comment', '')),
             ''.join('<li><a href="%s/items/%s">%s →</a></li>' % (SHOP, i['id'], esc(i['name'])) for i in c['items']))
             for c in cs)
-        head = '''<section class="intro"><img class="hakase" src="/dr-modi-icon.png" alt="Dr.MoDi" width="96" height="96" style="width:96px">
+        head = '''<section class="intro"><img class="hakase" src="/dr-modi-icon.png" alt="Dr.MoDi" width="75" height="96" style="width:75px">
 <h1>COORDINATE</h1><p>Dr.MoDiのコーディネート提案。<br>MoDiのアイテムだけで組んだ、%d通りの着こなしです。</p>
 <p class="filter" id="filter" hidden>このアイテムを使ったコーデを表示しています ― <a href="/coords/">すべて見る</a></p></section>''' % len(cs)
         script = '''<script>(function(){var m=location.search.match(/item=(\\d+)/);if(!m)return;var n=0;
