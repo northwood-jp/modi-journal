@@ -34,4 +34,13 @@ article h1{font-family:"Noto Serif JP",serif;font-size:28px;line-height:1.5;marg
 footer{background:var(--olive);color:var(--cream);text-align:center;font-size:11px;letter-spacing:.12em;padding:28px 16px}
 footer a{color:var(--cream)}
 footer p{margin:4px 0}
-@media (max-width:640px){.grid{grid-template-columns:1fr}article h1{font-size:23px}.top{padding:14px 16px}nav a{margin-left:12px}}
+.tocoord{margin-top:14px!important}.tocoord a{color:var(--olive);font-weight:700;text-decoration:none;border-bottom:1px solid var(--olive)}
+.filter{margin-top:12px!important;font-size:13px}.filter a{color:var(--olive)}
+.coords{display:grid;grid-template-columns:repeat(2,1fr);gap:36px 28px}
+.coord img{width:100%;display:block}
+.coord .cn{font-size:11px;letter-spacing:.2em;color:var(--sub);margin:12px 0 2px}
+.coord h2{font-family:"Noto Serif JP",serif;font-size:18px;margin:0 0 6px}
+.coord .cc{font-size:13px;line-height:1.8;margin:0 0 10px}
+.coord ul{list-style:none;padding:0;margin:0}
+.coord li a{display:block;padding:8px 10px;margin-bottom:6px;border:1px solid var(--line);background:#fff;color:var(--ink);text-decoration:none;font-size:13px}
+@media (max-width:640px){.coords{grid-template-columns:1fr}.grid{grid-template-columns:1fr}article h1{font-size:23px}.top{padding:14px 16px}nav a{margin-left:10px;font-size:10px;letter-spacing:.08em;white-space:nowrap}.logo{white-space:nowrap}}

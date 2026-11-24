@@ -99,7 +99,7 @@ def layout(title, desc, content, url, image=None):
 <link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/style.css"></head>
 <body><header class="top"><a class="logo" href="/">MoDi <span>JOURNAL</span></a>
-<nav><a href="%s">ONLINE STORE</a></nav></header>
+<nav><a href="/coords/">COORDINATE</a><a href="%s">ONLINE STORE</a></nav></header>
 <main>%s</main>
 <footer><p>MILITARY ARCHIVE CURATION STORE ― memento mori &amp; carpe diem.</p>
 <p><a href="%s">MoDi ONLINE STORE</a> ・ MoDi is operated by <a href="https://northwood-jp.com">NORTHWOOD</a></p></footer>
@@ -164,10 +164,28 @@ def main():
 <span class="pd">No.%s ・ %s</span><span class="pt">%s</span></a>''' % (
         p['slug'], p['slug'], esc(p['title']), esc(p.get('no', '')), p['date_obj'].strftime('%Y.%m.%d'), esc(p['title']))
         for p in posts)
-    intro = '<section class="intro"><img class="hakase" src="/modi-hakase.svg" alt="Dr.MoDi" width="150" height="167"><h1>MoDi JOURNAL</h1><p>各国軍の名作を、確かな資料からひもとく読みもの。<br>時代の記録を、MoDi博士が一着ずつ丁寧に解説します。</p></section>'
+    intro = '<section class="intro"><img class="hakase" src="/modi-hakase.svg" alt="Dr.MoDi" width="150" height="167"><h1>MoDi JOURNAL</h1><p>各国軍の名作を、確かな資料からひもとく読みもの。<br>時代の記録を、Dr.MoDiが一着ずつ丁寧に解説します。</p><p class="tocoord"><a href="/coords/">Dr.MoDiのコーディネート提案を見る →</a></p></section>'
     open(OUT + '/index.html', 'w', encoding='utf-8').write(
         layout('MoDi JOURNAL | ミリタリーの名作をひもとく読みもの', '各国軍の名作ミリタリーウェアの歴史と見分け方を、確かな資料からひもとくMoDiの読みもの。',
                intro + '<div class="grid">%s</div>' % cards, SITE + '/'))
+
+    # Dr.MoDiのコーデ一覧（新しい順）。?item=商品ID で、その商品を使ったコーデだけに絞れる
+    if os.path.exists('static/coords.json'):
+        cs = json.load(open('static/coords.json', encoding='utf-8'))['coords'][::-1]
+        boxes = ''.join('''<div class="coord" id="c%s" data-items="%s"><img src="/coords/%s.jpg" alt="%s" loading="lazy">
+<p class="cn">COORDINATE No.%s</p><h2>%s</h2><p class="cc">%s</p><ul>%s</ul></div>''' % (
+            c['id'], ','.join(i['id'] for i in c['items']), c['id'], esc(c['title']), c['id'], esc(c['title']), esc(c.get('comment', '')),
+            ''.join('<li><a href="%s/items/%s">%s →</a></li>' % (SHOP, i['id'], esc(i['name'])) for i in c['items']))
+            for c in cs)
+        head = '''<section class="intro"><img class="hakase" src="/dr-modi-icon.png" alt="Dr.MoDi" width="96" height="96" style="width:96px">
+<h1>COORDINATE</h1><p>Dr.MoDiのコーディネート提案。<br>MoDiのアイテムだけで組んだ、%d通りの着こなしです。</p>
+<p class="filter" id="filter" hidden>このアイテムを使ったコーデを表示しています ― <a href="/coords/">すべて見る</a></p></section>''' % len(cs)
+        script = '''<script>(function(){var m=location.search.match(/item=(\\d+)/);if(!m)return;var n=0;
+document.querySelectorAll('.coord').forEach(function(e){if((','+e.dataset.items+',').indexOf(','+m[1]+',')<0)e.style.display='none';else n++;});
+if(n)document.getElementById('filter').hidden=false;else document.querySelectorAll('.coord').forEach(function(e){e.style.display='';});})();</script>'''
+        open(OUT + '/coords/index.html', 'w', encoding='utf-8').write(
+            layout('Dr.MoDiのコーディネート提案 | MoDi JOURNAL', 'ミリタリーのデッドストックとレプリカだけで組んだ、Dr.MoDiのコーディネート提案。',
+                   head + '<div class="coords">%s</div>' % boxes + script, SITE + '/coords/', SITE + '/coords/' + cs[0]['id'] + '.jpg'))
 
     # トップのスライドショーとInstagram用の一覧（新しい順）
     feed = [{'title': p['title'], 'url': p['url'], 'image': p['image'], 'date': p['date_obj'].isoformat(),
