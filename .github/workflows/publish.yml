@@ -24,8 +24,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: 日本語のフォントを入れる
-        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
       - name: 必要な部品を入れる
         run: pip install pillow requests
       - name: 下書きシートから記事を取り込む

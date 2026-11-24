@@ -2,8 +2,9 @@
 import random
 from PIL import Image, ImageDraw, ImageFont
 
-D = '/usr/share/fonts/opentype/noto/'
-SERIF, SANS = D + 'NotoSerifCJK-Bold.ttc', D + 'NotoSansCJK-Bold.ttc'
+import os
+D = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fonts') + '/'   # リポジトリに入れたフォントを使う
+SERIF, SANS = D + 'NotoSerifJP-Bold.otf', D + 'NotoSansJP-Bold.otf'
 f = lambda p, s: ImageFont.truetype(p, s, index=0)
 
 
