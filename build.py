@@ -194,7 +194,17 @@ document.querySelector('.coords').insertAdjacentElement('afterend',back);})();</
     # トップのスライドショーとInstagram用の一覧（新しい順）
     feed = [{'title': p['title'], 'url': p['url'], 'image': p['image'], 'date': p['date_obj'].isoformat(),
              'no': p.get('no', ''), 'slug': p['slug'], 'summary': p['desc'], 'items': p['items']} for p in posts]
-    json.dump({'posts': feed}, open(OUT + '/feed.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    # スライドショー用：記事の2番目に「コーデ提案を更新しました」のバナーを入れる
+    slides = [{'title': f['title'], 'url': f['url'], 'image': f['image']} for f in feed[:4]]
+    if os.path.exists('static/coords.json'):
+        import coord_banner
+        last = json.load(open('static/coords.json', encoding='utf-8'))['coords'][-1]
+        os.makedirs(OUT + '/coords', exist_ok=True)
+        coord_banner.make('static/%s.jpg' % last['id'], 'static/dr-modi-icon.png', last['id'], last['title'],
+                          OUT + '/coords/banner-%s.jpg' % last['id'])
+        slides.insert(1, {'title': 'Dr.MoDiのコーディネート提案を更新しました', 'url': SITE + '/coords/',
+                          'image': SITE + '/coords/banner-%s.jpg' % last['id']})
+    json.dump({'posts': feed, 'slides': slides}, open(OUT + '/feed.json', 'w', encoding='utf-8'), ensure_ascii=False)
 
     # RSSとサイトマップ
     items = ''.join('<item><title>%s</title><link>%s</link><guid>%s</guid><pubDate>%s</pubDate><description>%s</description></item>' % (
