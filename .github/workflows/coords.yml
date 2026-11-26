@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '20 * * * *'   # 毎時20分ごとに、コーデ候補シートを見に行く
   workflow_dispatch:
+  push:
+    paths: ['coords_kick.txt']   # このファイルを書き換えてpushすると、すぐ動く
 
 permissions:
   contents: write
