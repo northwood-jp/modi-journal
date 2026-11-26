@@ -55,15 +55,15 @@ def make(coord_img, icon_img, no, title, out):
     lines.append(cur)
     lines = lines[:2]
     # 2行になって下の帯に近づきすぎるときは、NEWとタイトルをまとめて上へずらす
-    last = y_new + 48 + (len(lines) - 1) * (size + 10)
+    last = y_new + 38 + (len(lines) - 1) * (size + 10)
     y_new -= max(0, last - (B - 44 - 36))
     d.text((L, y_new), 'NEW  No.%s' % no, font=sans(22), fill=OLIVE, anchor='ls')
-    y = y_new + 48
+    y = y_new + 38
     for ln in lines:
         d.text((L, y), ln, font=tf, fill=INK, anchor='ls'); y += size + 10
     # いちばん下の誘い文句は、オリーブの帯に白抜き文字で目立たせる（カードの下の余白にそろえる）
     cta, cf = 'MoDiのアイテムだけで組んだ着こなし術 →', sans(18)
     tw = d.textlength(cta, font=cf)
-    d.rectangle([L, B - 44, L + tw + 32, B], fill=OLIVE)
+    d.rounded_rectangle([L, B - 44, L + tw + 32, B], radius=8, fill=OLIVE)
     d.text((L + 16, B - 22), cta, font=cf, fill=CREAM, anchor='lm')
     im.save(out, quality=88)
