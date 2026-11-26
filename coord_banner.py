@@ -1,6 +1,7 @@
 """MoDiトップのスライドショーに入れる「Dr.MoDiのコーディネート提案」のバナー（1200×630）を作る"""
 import os
-from PIL import Image, ImageDraw, ImageFont
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 F = os.path.join(HERE, 'fonts') + '/'
@@ -21,7 +22,35 @@ def make(coord_img, icon_img, no, title, out):
     ch = H - 2 * M
     cw = int(c.width * ch / c.height)
     c = c.resize((cw, ch), Image.LANCZOS)
-    im.paste(c, ((x0 - cw) // 2, M))
+    # コーデ画像の背景を左右に広げて、左側の枠いっぱいにする。
+    # 画像のふち（背景だけの部分）の色を、なめらかな面（2次式）に当てはめて外側へ延ばし、境目はぼかしてなじませる
+    pw = x0 - 2 * M
+    pad = (pw - cw) // 2
+    panel = Image.new('RGB', (pw, ch))
+    if pad > 0:
+        a = np.asarray(c).astype(float)
+        band = 24
+        ys, xs = np.mgrid[0:ch, 0:cw]
+        edge = (xs < band) | (xs >= cw - band)
+        X = (xs[edge] + pad) / pw - 0.5; Y = ys[edge] / ch - 0.5
+        A = np.stack([np.ones_like(X), X, Y, X * X, Y * Y, X * Y], 1)
+        gy, gx = np.mgrid[0:ch, 0:pw]
+        GX = gx / pw - 0.5; GY = gy / ch - 0.5
+        G = np.stack([np.ones_like(GX), GX, GY, GX * GX, GY * GY, GX * GY], -1)
+        bg = np.zeros((ch, pw, 3))
+        for k in range(3):
+            coef = np.linalg.lstsq(A, a[..., k][edge], rcond=None)[0]
+            bg[..., k] = G @ coef
+        panel = Image.fromarray(np.clip(bg, 0, 255).astype('uint8'))
+        mask = Image.new('L', (cw, ch), 255)
+        md = ImageDraw.Draw(mask)
+        for t in range(band):
+            v = int(255 * t / band)
+            md.line([(t, 0), (t, ch)], fill=v); md.line([(cw - 1 - t, 0), (cw - 1 - t, ch)], fill=v)
+        panel.paste(c, (pad, 0), mask)
+    else:
+        panel.paste(c, (0, 0))
+    im.paste(panel, (M, M))
     d.rectangle([x0, y0, x1, y1], fill=CREAM)
     serif = lambda s: ImageFont.truetype(F + 'NotoSerifJP-Bold.otf', s)
     sans = lambda s: ImageFont.truetype(F + 'NotoSansJP-Bold.otf', s)
