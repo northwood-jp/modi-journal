@@ -23,16 +23,24 @@ def make(coord_img, icon_img, no, title, out):
     serif = lambda s: ImageFont.truetype(F + 'NotoSerifJP-Bold.otf', s)
     sans = lambda s: ImageFont.truetype(F + 'NotoSansJP-Bold.otf', s)
     cx = x0 + 44
-    d.text((cx, 80), 'styling recommendations', font=serif(26), fill=OLIVE)
+    # 見出しの左にDr.MoDiのアイコン（線の上に立たせる）
+    tx = cx
+    if os.path.exists(icon_img):
+        ic = Image.open(icon_img).convert('RGBA')
+        ih = 92
+        ic = ic.resize((int(ic.width * ih / ic.height), ih), Image.LANCZOS)
+        im.paste(ic, (cx, 126 - ih), ic)
+        tx = cx + ic.width + 16
+    d.text((tx, 112), 'styling recommendations', font=serif(26), fill=OLIVE, anchor='ls')
     d.line([cx, 128, W - 104, 128], fill=OLIVE, width=2)
     # 見出しの3行は行間を詰めて、ひとつの塊に見せる
     d.text((cx, 152), 'Dr.MoDiの', font=sans(40), fill=INK)
     d.text((cx, 200), 'コーディネート提案', font=sans(40), fill=INK)
     d.text((cx, 252), '更新しました', font=sans(30), fill=OLIVE)
     d.text((cx, 330), 'NEW  No.%s' % no, font=sans(22), fill=OLIVE)
-    # タイトル：右下のアイコンにかからない幅で折り返す（最大2行）
+    # タイトル：カードの幅で折り返す（最大2行）
     tf = serif(24)
-    maxw = W - 100 - 130 - cx - 16
+    maxw = W - 104 - cx
     lines, cur = [], ''
     for ch_ in title:
         if d.textlength(cur + ch_, font=tf) > maxw:
@@ -41,12 +49,6 @@ def make(coord_img, icon_img, no, title, out):
             cur += ch_
     lines.append(cur)
     d.multiline_text((cx, 366), '\n'.join(lines[:2]), font=tf, fill=INK, spacing=10)
-    # Dr.MoDiのアイコンを右下に
-    if os.path.exists(icon_img):
-        ic = Image.open(icon_img).convert('RGBA')
-        ih = 150
-        ic = ic.resize((int(ic.width * ih / ic.height), ih), Image.LANCZOS)
-        im.paste(ic, (W - 100 - ic.width, H - 60 - ih), ic)
     # いちばん下の誘い文句は、オリーブの帯に白抜き文字で目立たせる
     cta, cf = 'MoDiのアイテムだけで組んだ着こなし術 →', sans(18)
     tw = d.textlength(cta, font=cf)
