@@ -14,13 +14,14 @@ def make(coord_img, icon_img, no, title, out):
     im = Image.new('RGB', (W, H), OLIVE)
     d = ImageDraw.Draw(im)
     # 左：最新のコーデ画像（縦4:5）を、上下の余白いっぱいに
+    # 右のカードは文字が収まる幅にとどめ、残りの左側の真ん中にコーデ画像を置いて余白を持たせる
+    CARD_W = 540
+    x0, y0, x1, y1 = W - M - CARD_W, M, W - M, H - M
     c = Image.open(coord_img).convert('RGB')
     ch = H - 2 * M
     cw = int(c.width * ch / c.height)
     c = c.resize((cw, ch), Image.LANCZOS)
-    im.paste(c, (M, M))
-    # 右：クリーム色のカード
-    x0, y0, x1, y1 = M + cw + M, M, W - M, H - M
+    im.paste(c, ((x0 - cw) // 2, M))
     d.rectangle([x0, y0, x1, y1], fill=CREAM)
     serif = lambda s: ImageFont.truetype(F + 'NotoSerifJP-Bold.otf', s)
     sans = lambda s: ImageFont.truetype(F + 'NotoSansJP-Bold.otf', s)
