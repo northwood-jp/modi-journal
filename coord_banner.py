@@ -25,10 +25,11 @@ def make(coord_img, icon_img, no, title, out):
     cx = x0 + 44
     d.text((cx, 80), 'styling recommendations', font=serif(26), fill=OLIVE)
     d.line([cx, 128, W - 104, 128], fill=OLIVE, width=2)
-    d.text((cx, 156), 'Dr.MoDiの', font=sans(40), fill=INK)
-    d.text((cx, 212), 'コーディネート提案', font=sans(40), fill=INK)
-    d.text((cx, 284), '更新しました', font=sans(30), fill=OLIVE)
-    d.text((cx, 356), 'NEW  No.%s' % no, font=sans(22), fill=OLIVE)
+    # 見出しの3行は行間を詰めて、ひとつの塊に見せる
+    d.text((cx, 152), 'Dr.MoDiの', font=sans(40), fill=INK)
+    d.text((cx, 200), 'コーディネート提案', font=sans(40), fill=INK)
+    d.text((cx, 252), '更新しました', font=sans(30), fill=OLIVE)
+    d.text((cx, 330), 'NEW  No.%s' % no, font=sans(22), fill=OLIVE)
     # タイトル：右下のアイコンにかからない幅で折り返す（最大2行）
     tf = serif(24)
     maxw = W - 100 - 130 - cx - 16
@@ -39,12 +40,17 @@ def make(coord_img, icon_img, no, title, out):
         else:
             cur += ch_
     lines.append(cur)
-    d.multiline_text((cx, 392), '\n'.join(lines[:2]), font=tf, fill=INK, spacing=10)
+    d.multiline_text((cx, 366), '\n'.join(lines[:2]), font=tf, fill=INK, spacing=10)
     # Dr.MoDiのアイコンを右下に
     if os.path.exists(icon_img):
         ic = Image.open(icon_img).convert('RGBA')
         ih = 150
         ic = ic.resize((int(ic.width * ih / ic.height), ih), Image.LANCZOS)
         im.paste(ic, (W - 100 - ic.width, H - 60 - ih), ic)
-    d.text((cx, H - 82), 'MoDiのアイテムだけで組んだ着こなし術 →', font=sans(18), fill=OLIVE)
+    # いちばん下の誘い文句は、オリーブの帯に白抜き文字で目立たせる
+    cta, cf = 'MoDiのアイテムだけで組んだ着こなし術 →', sans(18)
+    tw = d.textlength(cta, font=cf)
+    by = H - 96
+    d.rectangle([cx, by, cx + tw + 32, by + 44], fill=OLIVE)
+    d.text((cx + 16, by + 22), cta, font=cf, fill=CREAM, anchor='lm')
     im.save(out, quality=88)
