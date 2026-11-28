@@ -89,7 +89,7 @@ def body_html(body):
 def layout(title, desc, content, url, image=None):
     og = ('<meta property="og:image" content="%s">' % esc(image)) if image else ''
     return '''<!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="p:domain_verify" content="2c56012f118a9214df48b7006797c7aa"/>
 <title>%s</title><meta name="description" content="%s">
 <meta property="og:title" content="%s"><meta property="og:description" content="%s"><meta property="og:url" content="%s">%s
 <meta property="og:type" content="article"><meta name="twitter:card" content="summary_large_image">
