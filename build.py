@@ -204,6 +204,25 @@ document.querySelector('.coords').insertAdjacentElement('afterend',back);})();</
                           OUT + '/coords/banner-%s.jpg' % last['id'])
         slides.insert(1, {'title': 'Dr.MoDiのコーディネート提案を更新しました', 'url': SITE + '/coords/',
                           'image': SITE + '/coords/banner-%s.jpg' % last['id']})
+    # コーデ用のRSS（ピンタレストの自動ピン用）。1コーデ＝1アイテム、画像はenclosureと本文の両方に入れる
+    if os.path.exists('static/coords.json'):
+        import email.utils, datetime as _dt
+        cs = json.load(open('static/coords.json', encoding='utf-8'))['coords'][::-1]
+        def _rfc(s):
+            return email.utils.format_datetime(_dt.datetime.fromisoformat(s)) if s else ''
+        citems = ''.join(
+            '<item><title>%s</title><link>%s/coords/#c%s</link><guid isPermaLink="false">modi-coord-%s</guid>%s'
+            '<description><![CDATA[<img src="%s" alt="%s"><p>%s</p><p>%s</p>]]></description>'
+            '<enclosure url="%s" type="image/jpeg" length="0"/></item>' % (
+                esc('Dr.MoDiのコーディネート提案 No.%s「%s」' % (c['id'], c['title'])), SITE, c['id'], c['id'],
+                ('<pubDate>%s</pubDate>' % _rfc(c.get('date'))) if c.get('date') else '',
+                c['image'], esc(c['title']), c.get('comment', ''),
+                '使ったアイテム：' + '／'.join(i['name'] for i in c['items']),
+                c['image'])
+            for c in cs)
+        open(OUT + '/coords/rss.xml', 'w', encoding='utf-8').write(
+            '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Dr.MoDiのコーディネート提案｜MoDi JOURNAL</title>'
+            '<link>%s/coords/</link><description>MoDiのアイテムだけで組んだ着こなし術</description><language>ja</language>%s</channel></rss>' % (SITE, citems))
     json.dump({'posts': feed, 'slides': slides}, open(OUT + '/feed.json', 'w', encoding='utf-8'), ensure_ascii=False)
 
     # RSSとサイトマップ

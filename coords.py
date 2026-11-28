@@ -109,6 +109,7 @@ def main():
         no = '%03d' % (max([int(x['id']) for x in data['coords']] + [0]) + 1)
         Image.open(src).save('static/%s.jpg' % no, quality=85)
         data['coords'].append({'id': no, 'title': c['title'], 'comment': c.get('comment', ''),
+            'date': datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat(timespec='seconds'),
             'image': SITE + 'coords/%s.jpg' % no,
             'items': [{'id': c['outerId'], 'name': short(c['outerName'])},
                       {'id': c['bottomId'], 'name': short(c['bottomName'])},
