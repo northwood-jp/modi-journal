@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: 必要な部品を入れる
-        run: pip install pillow requests
+        run: pip install pillow requests numpy
       - name: 下書きシートから記事を取り込む
         env:
           GAS_URL: ${{ secrets.GAS_URL }}
